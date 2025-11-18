@@ -1,11 +1,22 @@
 #include "Signal.h"
-#include <iostream>
-#include <fstream>
 
 
 namespace Signal {
+	bool RealSignal::Check2Compute(const RealSignal& other) const {
+		if (data_.size() != other.data_.size()) {
+			std::string errorMsg = "The two signals must have the same length!";
+			throw std::invalid_argument(errorMsg);
+		}
+		if (!coordinate_.isApprox(other.coordinate_)) {
+			std::string errorMsg = "Error: The two signals have different coordinates!";
+			throw std::invalid_argument(errorMsg);
+		}
+		return true;
+	}
+
 	void RealSignal::GenerateCoordinate(double begin, double end, int pointsNumber) {
 		coordinate_ = VectorXd::LinSpaced(pointsNumber, begin, end);
+		sampleRate = (double)(pointsNumber - 1) / (end - begin);
 		ifCoordinate_ = true;
 	}
 
@@ -39,14 +50,7 @@ namespace Signal {
 
 	// ÷ÿ‘ÿ‘ÀÀ„∑˚
 	RealSignal RealSignal::operator+(const RealSignal& other) const {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		RealSignal result(data_.size());
 		result.GenerateCoordinate(coordinate_[0], coordinate_[coordinate_.size() - 1], data_.size());
 		result.SetData(data_ + other.data_);
@@ -54,14 +58,7 @@ namespace Signal {
 	}
 
 	RealSignal RealSignal::operator-(const RealSignal& other) const {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		RealSignal result(data_.size());
 		result.GenerateCoordinate(coordinate_[0], coordinate_[coordinate_.size() - 1], data_.size());
 		result.SetData(data_ - other.data_);
@@ -69,14 +66,7 @@ namespace Signal {
 	}
 
 	RealSignal RealSignal::operator*(const RealSignal& other) const {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		RealSignal result(data_.size());
 		result.GenerateCoordinate(coordinate_[0], coordinate_[coordinate_.size() - 1], data_.size());
 		result.SetData(data_ * other.data_);
@@ -84,68 +74,44 @@ namespace Signal {
 	}
 
 	RealSignal RealSignal::operator/(const RealSignal& other) const {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		RealSignal result(data_.size());
 		result.GenerateCoordinate(coordinate_[0], coordinate_[coordinate_.size() - 1], data_.size());
 		result.SetData(VectorXd(data_.array() / other.data_.array()));
 		return result;
 	}
 
+	bool RealSignal::operator==(const RealSignal& other) const {
+		if (coordinate_.isApprox(other.GetCoordinate()) && data_.isApprox(other.GetData()))
+			return true;
+		else return false;
+	}
+
+	bool RealSignal::operator!=(const RealSignal& other) const {
+		if (*this == other) return false;
+        else return true;
+	}
+
 	RealSignal& RealSignal::operator+=(const RealSignal& other) {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		*this = *this + other;
 		return *this;
 	}
 
 	RealSignal& RealSignal::operator-=(const RealSignal& other) {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		*this = *this - other;
 		return *this;
 	}
 
 	RealSignal& RealSignal::operator*=(const RealSignal& other) {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		*this = *this * other;
 		return *this;
 	}
 
 	RealSignal& RealSignal::operator/=(const RealSignal& other) {
-		if (data_.size() != other.data_.size()) {
-			std::string errorMsg = "The two signals must have the same length!";
-			throw std::invalid_argument(errorMsg);
-		}
-		if (coordinate_ != other.coordinate_) {
-			std::string errorMsg = "Error: The two signals have different coordinates!";
-			throw std::invalid_argument(errorMsg);
-		}
+		Check2Compute(other);
 		*this = *this / other;
 		return *this;
 	}

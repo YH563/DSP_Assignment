@@ -1,5 +1,4 @@
-#ifndef BASEFUNCTION_H
-#define BASEFUNCTION_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -7,14 +6,12 @@
 #define TWO_PI 2 * PI
 
 namespace BaseFunction {
-
 	using VectorXd = Eigen::VectorXd;
     using MatrixXd = Eigen::MatrixXd;
+	using VectorXc = Eigen::VectorXcd;
 
-	VectorXd Constant(VectorXd x, double c) { return VectorXd::Constant(x.size(), c); }
-	VectorXd Sin(VectorXd x) { return Eigen::sin(x.array()); }
-	VectorXd Cos(VectorXd x) { return Eigen::cos(x.array()); }
-	VectorXd Exp(VectorXd x) { return Eigen::exp(x.array()); } 
+	VectorXd Constant(const VectorXd& x, double c);
+	VectorXd Sin(const VectorXd& x);
+	VectorXd Cos(const VectorXd& x);
+	VectorXd Exp(const VectorXd& x);
 }
-
-#endif // !

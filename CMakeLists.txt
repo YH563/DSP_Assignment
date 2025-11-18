@@ -18,9 +18,9 @@ target_include_directories(eigen INTERFACE
 )
 
 # 包含子项目。
-add_subdirectory ("modules/Signal")
-add_subdirectory ("modules/signal_transform")
-add_subdirectory ("modules/visualization")
+add_subdirectory ("Modules/Signal")
+add_subdirectory ("Modules/SignalTransform")
+add_subdirectory ("Modules/Visualization")
 add_subdirectory ("Experiment")
 
 # 添加可执行文件并链接库
@@ -28,5 +28,6 @@ add_executable(${PROJECT_NAME} main.cpp )
 target_link_libraries(${PROJECT_NAME}
     PRIVATE Signal
     PRIVATE Experiment
+    PRIVATE SignalTransform
 )
 

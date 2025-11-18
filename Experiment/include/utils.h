@@ -1,4 +1,7 @@
+#pragma once
 #include <chrono>
+#include "../../Modules/Signal/include/Signal.h"
+#include <bitset>
 
 namespace utils {
     // 计算函数执行时间
@@ -12,4 +15,7 @@ namespace utils {
         std::cout << "函数 " << func_name << " 执行耗时: " << duration.count() << " ms" << std::endl;
         return result;
     }
+
+    // 位逆序处理
+    Signal::FrequencySignal& BitReverse(Signal::FrequencySignal& signal);
 }

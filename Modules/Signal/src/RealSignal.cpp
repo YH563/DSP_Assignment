@@ -26,12 +26,6 @@ namespace Signal {
 		this->SetData(func(this->GetCoordinate()));
 	}
 
-	void RealSignal::GenerateSignal(Callback func, double sampleRate, int pointsNumber, double begin) {
-		this->sampleRate = sampleRate;
-		this->GenerateCoordinate(begin, begin + (pointsNumber - 1) * 1.0 / sampleRate, pointsNumber);
-		this->SetData(func(this->GetCoordinate()));
-	}
-
 	void RealSignal::GenerateSignal(Callback func, VectorXd& coordinate) {
 		this->SetCoordinate(coordinate);
 		this->SetData(func(coordinate));
@@ -70,6 +64,13 @@ namespace Signal {
 		RealSignal result(data_.size());
 		result.GenerateCoordinate(coordinate_[0], coordinate_[coordinate_.size() - 1], data_.size());
 		result.SetData(data_ * other.data_);
+		return result;
+	}
+
+	RealSignal operator*(const MatrixXd& matrix, const RealSignal& signal) {
+		RealSignal result = signal;
+		VectorXd product = matrix * signal.GetData();
+		result.SetData(product);
 		return result;
 	}
 
@@ -123,7 +124,7 @@ namespace Signal {
 	}
 
 	void RealSignal::Output2CSV(std::string fileName) {
-		Eigen::MatrixXd outputMatrix(this->Size(), 2);
+		Eigen::MatrixXd outputMatrix(this->size(), 2);
 		outputMatrix.col(0) = coordinate_;
 		outputMatrix.col(1) = data_;
 		Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", "\n");

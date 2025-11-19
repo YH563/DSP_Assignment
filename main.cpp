@@ -3,13 +3,15 @@
 #include <iostream>
 #include "Experiment/include/BaseFunction.h"
 #include "Experiment/include/utils.h"
+#include "Modules/SignalTransform/include/SignalTransform.h"
 
 int main() {
 	Signal::RealSignal s1;
-	s1.GenerateCoordinate(0, 1, 20);
-	s1.GenerateSignal(BaseFunction::Exp);
-	Eigen::VectorXd x = Eigen::VectorXd::LinSpaced(1000000, 0, 1);
-	utils::time_it("Sin(x)", BaseFunction::Sin, x);
+	Signal::RealSignal s2;
+	s1.GenerateSignal(BaseFunction::Sin, 0, 1, 10);
 	s1.Print();
-	return 0;
+	s2.GenerateSignal(BaseFunction::Cos, 0, 1, 10);
+	s2.Print();
+	Signal::RealSignal cycleConv = SignalTransform::CycleConv(s1, s2, nullptr);
+	cycleConv.Print();
 }

@@ -4,10 +4,11 @@
 #include <Eigen/Dense>
 #include <complex>
 
-namespace SiganlTransform {
+namespace SignalTransform {
 	using VectorXd = Eigen::VectorXd;
 	using MatrixXd = Eigen::MatrixXd;
 	using VectorXc = Eigen::VectorXcd;
+	using RowVectorXd = Eigen::RowVectorXd;
 
 	// ÏßÐÔ¾í»ý
 	Signal::RealSignal LinearConv(const Signal::RealSignal& x, const Signal::RealSignal& y);

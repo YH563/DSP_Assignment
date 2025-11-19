@@ -2,15 +2,15 @@
 
 namespace Signal {
 	void FrequencySignal::GenerateCoordinate(double begin, double end, int pointsNumber) {
-		coordinate_ = VectorXc::LinSpaced(pointsNumber, begin, end);
+		coordinate_ = VectorXd::LinSpaced(pointsNumber, begin, end);
 	}
 
 	void FrequencySignal::GenerateCoordinate(double sampleRate, int pointsNumber) {
-		coordinate_ = VectorXc::LinSpaced(pointsNumber, 0, sampleRate);
+		coordinate_ = VectorXd::LinSpaced(pointsNumber, 0, sampleRate);
 	}
 
 	void FrequencySignal::GenerateCoordinate(int pointsNumber) {
-		coordinate_ = VectorXc::LinSpaced(pointsNumber, 0, (double)(TWO_PI / pointsNumber));
+		coordinate_ = VectorXd::LinSpaced(pointsNumber, 0, (double)(TWO_PI / pointsNumber));
 	}
 
 	void FrequencySignal::ShiftCoordinate() {

@@ -25,13 +25,12 @@ namespace Signal {
 
 		// 构造函数
 		RealSignal() = default;
-		explicit RealSignal(int size): data_(size), coordinate_(size) {}
-		RealSignal(RealSignal& other) : data_(other.data_), coordinate_(other.coordinate_), sampleRate(other.sampleRate)
+		explicit RealSignal(int size): data_(size), coordinate_(size) { data_.setZero(); coordinate_.setZero(); }
+		RealSignal(const RealSignal& other) : data_(other.data_), coordinate_(other.coordinate_), sampleRate(other.sampleRate)
 		{ ifCoordinate_ = true; }
 
 		// 基本信号生成
 		void GenerateSignal(Callback func, double begin, double end, size_t length);
-		void GenerateSignal(Callback func, double sampleRate, int pointsNumber, double begin = 0.0);
 		void GenerateSignal(Callback func, VectorXd& coordinate);
 		void GenerateSignal(Callback func);
 
@@ -47,8 +46,7 @@ namespace Signal {
 		RealSignal operator+(const RealSignal& other) const;
 		RealSignal operator-(const RealSignal& other) const;
 		RealSignal operator*(const RealSignal& other) const;
-		RealSignal operator*(const MatrixXd& matrix) const;
-		friend RealSignal operator*(const MatrixXd& matrix, const RealSignal& signal);
+		friend RealSignal operator*(const MatrixXd& matrix, const RealSignal& signal);  // 左乘矩阵
 		RealSignal operator/(const RealSignal& other) const;
 
 		bool operator==(const RealSignal& other) const;
@@ -59,15 +57,18 @@ namespace Signal {
 		RealSignal& operator*=(const RealSignal& other) ;
 		RealSignal& operator/=(const RealSignal& other) ;
 
+		double& operator[](int index) { return data_[index]; }
+		const double& operator[](int index) const { return data_[index]; }
+
 		// 获取信号基本信息
 		VectorXd& GetData() { return data_; }
 		VectorXd& GetCoordinate() { return coordinate_; }
 		const VectorXd& GetData() const { return data_; }
 		const VectorXd& GetCoordinate() const { return coordinate_; }
-		int Size() const { return data_.size(); }
-		double Max() const { return data_.maxCoeff(); }
-		double Min() const { return data_.minCoeff(); }
-		double Mean() const { return data_.mean(); }
+		int size() const { return data_.size(); }
+		double max() const { return data_.maxCoeff(); }
+		double min() const { return data_.minCoeff(); }
+		double mean() const { return data_.mean(); }
 
 		// 输出信号
 		void Print() const;

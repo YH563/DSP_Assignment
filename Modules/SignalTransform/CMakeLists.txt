@@ -1,6 +1,6 @@
 add_library(SignalTransform STATIC
-    "src/SiganlTransform.cpp"
- "include/SiganlTransform.h")
+    "src/SignalTransform.cpp"
+ "include/SignalTransform.h")
 
 target_include_directories(SignalTransform PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include

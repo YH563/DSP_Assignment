@@ -11,11 +11,16 @@
 
 #define PI 3.1415926535897932
 #define TWO_PI 2 * PI
+#define IMAG std::complex<double>(0, 1)
 
 namespace Signal {
 	using VectorXd = Eigen::VectorXd;
 	using VectorXc = Eigen::VectorXcd;
 	using MatrixXd = Eigen::MatrixXd;
+	using Complex = std::complex<double>;
+
+	class RealSignal;  // 前向声明
+	class FrequencySignal;  // 前向声明
 
 	// 实信号
 	class RealSignal {
@@ -25,12 +30,13 @@ namespace Signal {
 
 		// 构造函数
 		RealSignal() = default;
-		explicit RealSignal(int size): data_(size), coordinate_(size) { data_.setZero(); coordinate_.setZero(); }
+		explicit RealSignal(int size) : data_(size), coordinate_(size) { data_.setZero(); GenerateCoordinate(0, size-1, size); }
 		RealSignal(const RealSignal& other) : data_(other.data_), coordinate_(other.coordinate_), sampleRate(other.sampleRate)
 		{ ifCoordinate_ = true; }
 
 		// 基本信号生成
 		void GenerateSignal(Callback func, double begin, double end, size_t length);
+		void GenerateSignal(Callback func, double sampleRate, size_t length);
 		void GenerateSignal(Callback func, VectorXd& coordinate);
 		void GenerateSignal(Callback func);
 
@@ -49,6 +55,12 @@ namespace Signal {
 		friend RealSignal operator*(const MatrixXd& matrix, const RealSignal& signal);  // 左乘矩阵
 		RealSignal operator/(const RealSignal& other) const;
 
+		RealSignal operator+(double scalar) const;
+		RealSignal operator-(double scalar) const;
+		RealSignal operator*(double scalar) const;
+		RealSignal operator/(double scalar) const;
+
+
 		bool operator==(const RealSignal& other) const;
 		bool operator!=(const RealSignal& other) const;
 
@@ -65,6 +77,7 @@ namespace Signal {
 		VectorXd& GetCoordinate() { return coordinate_; }
 		const VectorXd& GetData() const { return data_; }
 		const VectorXd& GetCoordinate() const { return coordinate_; }
+		double GetSampleRate() const { return sampleRate; }
 		int size() const { return data_.size(); }
 		double max() const { return data_.maxCoeff(); }
 		double min() const { return data_.minCoeff(); }
@@ -77,6 +90,12 @@ namespace Signal {
 		// 检查是否可以计算
 		bool Check2Compute(const RealSignal& other) const;
 
+		// 补0序列
+		RealSignal& ResizeZeroPadding(int newSize);
+
+		// 转换为复频域信号
+        FrequencySignal Real2Complex() const;
+
 	private:
 		VectorXd data_;  // 信号
 		VectorXd coordinate_;  // 坐标
@@ -88,11 +107,12 @@ namespace Signal {
 	// 复频域信号
 	class FrequencySignal {
 	public:
+		enum PrintType{Magnitude, Phase, Both};
 
 		// 构造函数
 		FrequencySignal() = default;
-		explicit FrequencySignal(int size): data_(size), coordinate_(size) {}
-		explicit FrequencySignal(FrequencySignal& other): data_(other.data_), coordinate_(other.coordinate_) {}
+		explicit FrequencySignal(int size) : data_(size), coordinate_(size) { coordinate_.Zero(size); }
+		FrequencySignal(const FrequencySignal& other) : data_(other.data_), coordinate_(other.coordinate_) {}
 
 		// 设置信号与坐标
 		void SetData(const VectorXc& data) { data_ = data; }
@@ -100,12 +120,14 @@ namespace Signal {
 		void GenerateCoordinate(double begin, double end, int pointsNumber);
 		void GenerateCoordinate(double sampleRate, int pointsNumber);
 		void GenerateCoordinate(int pointsNumber);
-		void ShiftCoordinate();
-		void iShiftCoordinate();
 
 		// 转换为实信号
 		RealSignal MagnitudeSignal() const;
         RealSignal PhaseSignal() const;
+
+		// 重载运算符
+		Complex& operator[](int index) { return data_[index]; }
+		const Complex& operator[](int index) const { return data_[index]; }
 
 		// 获取基本信息
 		const VectorXc& GetData() const { return data_; }
@@ -116,13 +138,12 @@ namespace Signal {
 		VectorXd GetPhase() const { return data_.array().arg(); }
 		VectorXd GetReal() const { return data_.real(); }
 		VectorXd GetImag() const { return data_.imag(); }
-        int Size() { return data_.size(); }
+        int size() const { return data_.size(); }
 
 		// 打印信息
-        void Print() const;
+        void Print(PrintType type = Both) const;
 	private:
 		VectorXc data_;
 		VectorXd coordinate_;
-		bool ifShifted_ = false;  // 是否已经平移
 	};
 }

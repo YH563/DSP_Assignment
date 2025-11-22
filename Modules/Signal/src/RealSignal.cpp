@@ -26,6 +26,11 @@ namespace Signal {
 		this->SetData(func(this->GetCoordinate()));
 	}
 
+	void RealSignal::GenerateSignal(Callback func, double sampleRate, size_t length) {
+        this->GenerateCoordinate(0, (double)((length - 1) / sampleRate), int(length));
+		this->SetData(func(this->GetCoordinate()));
+	}
+
 	void RealSignal::GenerateSignal(Callback func, VectorXd& coordinate) {
 		this->SetCoordinate(coordinate);
 		this->SetData(func(coordinate));
@@ -82,6 +87,30 @@ namespace Signal {
 		return result;
 	}
 
+	RealSignal RealSignal::operator+(double scalar) const {
+		RealSignal result(data_.size());
+		result.SetData(data_.array() + scalar);
+		return result;
+	}
+
+	RealSignal RealSignal::operator-(double scalar) const {
+		RealSignal result(data_.size());
+		result.SetData(data_.array() - scalar);
+		return result;
+	}
+
+	RealSignal RealSignal::operator*(double scalar) const {
+		RealSignal result(data_.size());
+		result.SetData(data_.array() * scalar);
+		return result;
+	}
+
+	RealSignal RealSignal::operator/(double scalar) const {
+		RealSignal result(data_.size());
+		result.SetData(data_.array() / scalar);
+		return result;
+	}
+
 	bool RealSignal::operator==(const RealSignal& other) const {
 		if (coordinate_.isApprox(other.GetCoordinate()) && data_.isApprox(other.GetData()))
 			return true;
@@ -121,6 +150,7 @@ namespace Signal {
 	void RealSignal::Print() const {
 		std::cout << "Coordinate:\n" << coordinate_.transpose() << std::endl;
 		std::cout << "Data:\n" << data_.transpose() << std::endl;
+		std::cout << "Sample Rate:" << sampleRate << std::endl;
 	}
 
 	void RealSignal::Output2CSV(std::string fileName) {
@@ -134,5 +164,36 @@ namespace Signal {
 			file.close();
 			std::cout << "数据已保存到"<< fileName << std::endl;
 		}
+	}
+
+	RealSignal& RealSignal::ResizeZeroPadding(int newSize) {
+		if (newSize <= data_.size()) {
+			data_ = data_.head(newSize);
+			coordinate_ = coordinate_.head(newSize);
+			return *this;
+		}
+		if (newSize == data_.size()) {
+			return *this;
+		}
+		else {
+			int zeroNumber = newSize - data_.size();
+			VectorXd zeroPadding = VectorXd::Zero(newSize - data_.size());
+			VectorXd newData(newSize);
+			newData << data_, zeroPadding;
+			data_ = newData;
+			VectorXd newCoordinate(newSize);
+			VectorXd coordinatePadding = VectorXd::LinSpaced(zeroNumber, coordinate_.tail(1)[0] + 1/sampleRate,
+				coordinate_.tail(1)[0] + 1 / sampleRate + (double)((zeroNumber - 1) / sampleRate));
+            newCoordinate << coordinate_, coordinatePadding;
+			coordinate_ = newCoordinate;
+		}
+	}
+	
+	// 转成复频域信号
+	FrequencySignal RealSignal::Real2Complex() const{
+		FrequencySignal result;
+		result.SetData(this->data_.array() * Complex(1, 0));
+		result.GenerateCoordinate(this->sampleRate, this->size());
+		return result;
 	}
 }

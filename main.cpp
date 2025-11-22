@@ -7,11 +7,11 @@
 
 int main() {
 	Signal::RealSignal s1;
-	Signal::RealSignal s2;
-	s1.GenerateSignal(BaseFunction::Sin, 0, 1, 10);
+	s1.GenerateSignal(BaseFunction::Sin, 20.0, 1 << 4);
 	s1.Print();
-	s2.GenerateSignal(BaseFunction::Cos, 0, 1, 10);
-	s2.Print();
-	Signal::RealSignal cycleConv = SignalTransform::CycleConv(s1, s2, nullptr);
-	cycleConv.Print();
+	Signal::FrequencySignal result = utils::time_it("FFT", SignalTransform::FFT, s1);
+	//result.Print();
+	Signal::RealSignal inv_result = utils::time_it("IFFT", SignalTransform::IFFT, result);
+	inv_result.Print();
+    return 0;
 }

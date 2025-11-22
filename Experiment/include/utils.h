@@ -18,4 +18,10 @@ namespace utils {
 
     // 位逆序处理
     Signal::FrequencySignal& BitReverse(Signal::FrequencySignal& signal);
+
+    // 移频
+    Signal::FrequencySignal& ShiftFrequency(Signal::FrequencySignal& signal);
+
+	// 移频回原位
+    Signal::FrequencySignal& IShiftFrequency(Signal::FrequencySignal& signal);
 }

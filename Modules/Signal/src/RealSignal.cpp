@@ -20,6 +20,10 @@ namespace Signal {
 		ifCoordinate_ = true;
 	}
 
+	void RealSignal::GenerateCoordinate(int pointsNumber) {
+		GenerateCoordinate(0, (double)(pointsNumber - 1), pointsNumber);
+	}
+
 	// 基本函数信号生成
 	void RealSignal::GenerateSignal(Callback func, double begin, double end, size_t length) {
 		this->GenerateCoordinate(begin, end, int(length));

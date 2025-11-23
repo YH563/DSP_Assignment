@@ -4,6 +4,8 @@
 #include <bitset>
 
 namespace utils {
+    using namespace Signal;
+
     // 计算函数执行时间
     template <typename Func, typename... Args>
     auto time_it(const char* func_name, Func&& func, Args&&... args) -> decltype(func(args...)) {
@@ -17,11 +19,11 @@ namespace utils {
     }
 
     // 位逆序处理
-    Signal::FrequencySignal& BitReverse(Signal::FrequencySignal& signal);
+    FrequencySignal& BitReverse(FrequencySignal& signal);
 
     // 移频
-    Signal::FrequencySignal& ShiftFrequency(Signal::FrequencySignal& signal);
+    FrequencySignal& ShiftFrequency(FrequencySignal& signal);
 
 	// 移频回原位
-    Signal::FrequencySignal& IShiftFrequency(Signal::FrequencySignal& signal);
+    FrequencySignal& IShiftFrequency(FrequencySignal& signal);
 }

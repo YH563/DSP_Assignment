@@ -47,6 +47,7 @@ namespace Signal {
 			ifCoordinate_ = true; 
 			sampleRate = (double)1 / (coordiante[1] - coordiante[0]); }
 		void GenerateCoordinate(double begin, double end, int pointsNumber);
+		void GenerateCoordinate(int pointsNumber);
 
 		// ÖØÔØÔËËã·û
 		RealSignal operator+(const RealSignal& other) const;
@@ -59,7 +60,6 @@ namespace Signal {
 		RealSignal operator-(double scalar) const;
 		RealSignal operator*(double scalar) const;
 		RealSignal operator/(double scalar) const;
-
 
 		bool operator==(const RealSignal& other) const;
 		bool operator!=(const RealSignal& other) const;

@@ -91,8 +91,7 @@ namespace SignalTransform {
 				}
 			}
 		}
-		result.GetData().array() *= (1 / (double)N);
-		return result.MagnitudeSignal();
+		return result.MagnitudeSignal() * (1 / (double)N);
 	}
 
 }

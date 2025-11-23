@@ -4,7 +4,7 @@
 add_library(Visualization STATIC
     src/VisualizationCore.cpp  # 纯C++可视化核心逻辑
     # 其他C++源文件...
- "include/VisualizationCore.h")
+    "include/VisualizationCore.h")
 
 # 设置静态库的包含目录
 target_include_directories(Visualization PUBLIC
@@ -35,28 +35,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(pybind11)
 
-# 创建pybind11模块（用于Python绑定）
-pybind11_add_module(VisualizationPy MODULE
-    src/python_wrapper.cpp  # 注意：使用相同的源文件
-)
+# 包含头文件目录
+include_directories(include ${EIGEN3_INCLUDE_DIRS})
 
-# 设置pybind11模块的包含目录
-target_include_directories(VisualizationPy PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/third_party/eigen
-)
-
-# 链接pybind11模块所需的库
-target_link_libraries(VisualizationPy PRIVATE
-    Visualization
-    pybind11::module
-)
-
-# 设置输出目录和属性
-set_target_properties(VisualizationPy PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/python
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/python
-    # 在Windows上生成.pyd文件而不是.dll
-    SUFFIX ".pyd"
-    PREFIX ""
-)
+# 复制Python文件到构建目录
+file(COPY scripts/plot.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/python)
